@@ -1,0 +1,619 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load bootstrap3 %}
+{% load my_tags %}
+{% load static %}
+
+{% block juttu_content %}
+
+<!-- HERE WE TRY MAKING THINGS WORK! -->
+{% for laite_link in laites  %}
+
+  <button class="btn"><a href="#{{laite_link.id}}">{{ laite_link.valmistaja }} {{laite_link.malli}} {% if laite_link.kapasiteetti %}({{laite_link.kapasiteetti}}GB){% endif %}</a></button>
+
+{% endfor %}
+
+
+<nav class="nav navbar-light sticky-top my-2 my-lg-0">
+<div class="container-fluid">
+  <ul class="nav navbar-nav float-left my-2 my-lg-0">
+    <li class="my-2 my-lg-0">
+      <a href="{% url 'laite:uusi_laite_pk' pk=juttu.id %}" title="uusi_laite" class="btn btn-primary btn-sm">
+          <span class="">LISÄÄ UUSI LAITE</span>
+      </a>
+      <a href="#" class="btn btn-secondary btn-sm">Sivun alkuun</a>
+    </li>
+  </ul>
+</div>
+</nav>
+<p></p>
+
+
+<!-- TABLE BASES LAITE CARDS -->
+{% for laite in laites %}
+
+<!-- LAITE RAPORTTIIN AJAX -->
+
+<script>
+  $(document).ready(function() {
+
+    //Status
+    $("#laite_raporttiin{{laite.id}}").change(function () {
+      var raporttiin = $(this).val();
+      var raportti_status = raporttiin;
+      console.log(raportti_status)
+        $.ajax({
+          url: '{% url "laite:validate_laiteraporttiin" %}',
+          data: {
+            'raportti_status': raportti_status,
+            'laite_id': {{laite.id}},
+          },
+          dataType: 'json',
+          success: function (data) {
+            if (data.is_valid) {
+              console.log("status: " + data.new_raporttiin_id);
+              console.log("laite id: " + data.laite_id);
+            }
+          }
+        });
+    });
+  });
+</script>
+
+<!-- LAITE RAPORTTIIN AJAX END -->
+
+<!-- LAITE DATA STATUS AJAX -->
+<script>
+      $(document).ready(function() {
+        //Status
+        $("#id_laite_data_status{{laite.id}}").change(function () {
+          var laite_data_status = $(this).val()
+          console.log(laite_data_status);
+          $.ajax({
+            url: '{% url "laite:validate_laite_data_status" %}',
+            data: {
+              'laite_data_status': laite_data_status,
+              'laite_id': {{laite.id}},
+            },
+            dataType: 'json',
+            success: function (data) {
+              if (data.is_valid) {
+                console.log(data.new_laite_data_status_id);
+              }
+            }
+          });
+        });
+      });
+</script>
+<!-- LAITE DATA STATUS AJAX END -->
+
+
+<div class="card laitecard" id="{{ laite.id }}">
+<table class="laite-table">
+  {% if forloop.counter|modulo:2 == 0 %}
+  <thead class="laitekortti-body" style="background-color: whitesmoke;">
+  {% else %}
+  <thead class="laitekortti-body" style="background-color:white;">
+  {% endif %}
+      <th class="laitekortti-row laitekortti-head" style="width:450px;">{{ forloop.counter }}. {{laite.laite_tyyppi}} 
+        <span class="line-span text-info">Raporttiin: 
+        {% if laite.raporttiin %}
+          <input type="checkbox" id="laite_raporttiin{{laite.id}}" name="laite_raporttiin" value="{{laite.raporttiin}}" checked>
+        {% else %} 
+          <input type="checkbox" id="laite_raporttiin{{laite.id}}" name="laite_raporttiin" value="{{laite.raporttiin}}">
+        {% endif %}
+        <label for="laite_data_status">Data:</label>
+        <select name="laite_data_status" required id="id_laite_data_status{{laite.id}}">
+          <option value="">----</option>
+           {% for data_status in laite_data_status %}
+                {% if data_status.on_aktiivinen %}
+                {% if data_status.id == laite.laite_data_status_id %}
+                <option value="{{ data_status.id }}" selected>{{ data_status }}</option>
+              {% else %}
+              
+              <option value="{{ data_status.id }}">{{ data_status }}</option>
+              {% endif %}
+              {% endif %}
+            {% endfor %}
+          </select>
+        </span>
+
+
+      </th>
+
+      <th class="laitekortti-row laitekortti-head" style="width:80px;"></th>
+      <th class="laitekortti-row laitekortti-head" style="width:320px;"></th>
+      <th class="laitekortti-row laitekortti-head" style="width:270px;">Tiedot</th>
+      <th class="laitekortti-row laitekortti-head" style="width:190px;"></th>
+      <th class="laitekortti-row laitekortti-head" style="width:220px;"></th>
+      <th class="laitekortti-row laitekortti-head" style="width:100px;">Toiminnot</th>
+      <th class="laitekortti-row laitekortti-head" style="width:100px;"></th>
+  
+  </thead>
+
+  <!-- HIDE / SHOW SCRIPT LAITE -->
+  <script>
+    $(document).ready(function(){
+    $("#hideinfobutton{{laite.id}}").click(function(){
+        $("#hideinfo{{laite.id}}").toggle();
+    });
+    });
+  </script>
+  <!-- END SCRIPT-->
+
+  <tbody class="laitekortti-body">
+    <!-- COLUMN 1 -->
+      {% if forloop.counter|modulo:2 == 0 %}
+      <tr class="active" style="background-color: whitesmoke;">
+        {% else %}
+      <tr class="active" style="background-color: white;">
+      {% endif %}
+          <td class="laitekortti-row">
+              <h5>{{ laite.valmistaja }}, {{ laite.malli }} {% if laite.kapasiteetti > 0 %} ({{laite.kapasiteetti}}GB){% endif %}</h5>
+   
+            </td>
+            <td class="laitekortti-row" style="vertical-align-middle">
+              <a class="hover-element" id="hideinfobutton{{laite.id}}" style="color:red;"><strong>+/-</strong></a>
+            </td>
+            <td>
+            <!-- LAITE AJAX -->
+
+            <script>
+              $(document).ready(function() {
+                //Status
+                $("#id_laite_status{{laite.id}}").change(function () {
+                  var laite_status = $(this).val();
+
+                  $.ajax({
+                    url: '{% url "laite:validate_laitestatus" %}',
+                    data: {
+                      'laite_status': laite_status,
+                      'laite_id': {{laite.id}},
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                      if (data.is_valid) {
+                        console.log("status: " + data.new_status_id);
+                        console.log("laite id: " + data.laite_id);
+                      }
+                    }
+                  });
+                });
+
+                // SIJAINTI
+                $("#id_laite_sijainti{{laite.id}}").change(function () {
+                  var laite_sijainti = $(this).val()
+                  $.ajax({
+                    url: '{% url "laite:validate_laitesijainti" %}',
+                    data: {
+                      'laite_sijainti': laite_sijainti,
+                      'laite_id': {{laite.id}},
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                      if (data.is_valid) {
+                        console.log("sijainti id: " + data.new_sijainti_id);
+                        console.log("laite id: " + data.laite_id);
+                      }
+                    }
+                  });
+                });
+                
+
+              });
+        </script>
+
+            <!-- LAITE AJAX END -->
+            <!-- STATUS N SIJAINTI BEGIN-->
+            <form class="laitekortti-row laitekortti-head" action="" method="post">
+             {% csrf_token %}
+              <medium>
+                 <select name="laite_status" required id="id_laite_status{{laite.id}}">
+                   {% for status in laite_status %}
+                       {% if status.on_aktiivinen %}
+                       {% if status.id == laite.laite_status_id %}
+                       <option value="{{ status.id }}" selected>{{ status }}</option>
+                    {% else %}
+                    <option value="{{ status.id }}">{{ status }}</option>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                  
+                  <select name="laite_sijainti" required id="id_laite_sijainti{{laite.id}}">
+                    {% for sijainti in laite_sijainti %}
+                    {% if sijainti.on_aktiivinen %}
+                    {% if sijainti.id == laite.sijainti_id %}
+                    <option value="{{ sijainti.id }}" selected>{{ sijainti }}</option>
+                    {% else %}
+                    <option value="{{ sijainti.id }}">{{ sijainti }}</option>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                  
+                  <input type="hidden" value="{{laite.id}}" name="laite_id">
+                  
+                </form>
+              </medium>
+              <!-- STATUS END-->
+          </td>
+          <!-- COLUMN 2 -->
+          <td class="laitekortti-row" style="vertical-align-middle;white-space:nowrap;">
+              <medium>
+              {% for note in laite_muistiinpanot %}
+              {% if note.laite_id == laite.id %}
+                        {% if note.physical%}
+                            <span class="badge badge-danger">Physical</span>
+                        {% endif %}
+                        {% if note.fullfilesystem%}
+                            <span class="badge badge-warning">FFS</span>
+                        {% endif %}
+                        {% if note.filesystem%}
+                            <span class="badge badge-info">FS</span>
+                        {% endif %}
+                        {% if note.apk_downgrade%}
+                            <span class="badge badge-primary">APK D</span>
+                        {% endif %}
+                        {% if note.logical%}
+                            <span class="badge badge-success">Logical</span>
+                        {% endif %}
+                        {% if note.live %}
+                            <span class="badge badge-light">Live</span>
+                        {% endif %}
+              {% endif %}
+              {% endfor %}
+              
+              </medium>
+              <br>
+              <medium><strong>Sarjanumero: </strong>{{ laite.sarjanumero }}</medium>
+          </td>
+          <!-- COLUMN 3 -->
+          <td class="laitekortti-row" style="vertical-align-middle;white-space:nowrap;">
+              <medium><strong>IMEI1: </strong>{{ laite.IMEI }}</medium>
+              <br>
+              <medium><strong>Pakkokeino: </strong>{{ laite.pakkokeinonro }}/{{ laite.esinenro }}</medium>
+          </td>
+          <!-- COLUMN 4 -->
+          <td class="laitekortti-row">
+            <medium><strong>Oheislaitteita: </strong> {{laite.varsinainen_laite.count}}kpl</medium>
+            <br>
+            <medium><strong>Kirjattu: </strong>{{laite.kirjauspvm|date:" d.m.Y"}}</medium>
+          </td>
+          <!-- COLUMN 5 -->  
+          <td class="laitekortti-row" style="vertical-align-middle;white-space:nowrap;">
+            <a href="{% url 'laite:uusi_oheislaite' pk=laite.pk %}">Lisää oheislaite</a>
+            <br>
+            <a href="{% url 'laite:muokkaa_laite' pk=laite.pk %}">Muokkaa laite</a>
+          </td>
+          <!-- COLUMN 6 -->
+          <td class="laitekortti-row">
+            <!-- BEGIN COMMENT DROPDOWN -->
+            {% for note in laite_muistiinpanot %}
+            {% if note.laite_id == laite.id %}
+            <div class="dropdown">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Muistiinpanot
+                </button>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left p-4" style="width: 1000px;" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{% url 'laite:update_muistiinpano' pk=note.id %}"><button class="btn btn-info btn-sm">Lisää muistiinpano</button></a>
+                    <p></p>
+                    <p>
+                    {{note.laite_muistiinpano}}
+                    </p>
+                    <div class="dropdown-divider"></div>
+                    <p class="mb-0">
+                    Parsitut sovellukset: {{note.parsitut_sovellukset}}
+                    </p>
+                    <div class="dropdown-divider"></div>
+                    <p class='mt-1'>
+                    Parsimatta jääneet sovellukset: {{note.parsimatta_jaaneet_sovellukset}}
+                    </p>
+                    <div class="dropdown-divider"></div>
+                    <p class='mt-1'>
+                    Jäljennöstapa: 
+
+                        {% if note.physical %}
+                            <span class="badge badge-danger">Physical</span>
+                        {% endif %}
+                        {% if note.fullfilesystem %}
+                            <span class="badge badge-warning">FFS</span>
+                        {% endif %}
+                        {% if note.filesystem %}
+                            <span class="badge badge-info">FS</span>
+                        {% endif %}
+                        {% if note.apk_downgrade %}
+                            <span class="badge badge-primary">APK D</span>
+                        {% endif %}
+                        {% if note.logical %}
+                            <span class="badge badge-success">Logical</span>
+                        {% endif %}
+                        {% if note.live %}
+                            <span class="badge badge-success">Live</span>
+                        {% endif %}
+
+                    </p>
+                    <div class="dropdown-divider"></div>
+                    <p class='mt-1'>
+                    {% if note.raporttiin %}
+                    Muistiinpano raportissa: Kyllä
+                    {% else %}
+                    Muistiinpano raportissa: <strong style="color:red">Ei</strong></p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- END OF COMMENT DROPDOWN-->
+            {% endif %}
+            {% endfor %}
+
+          </td>
+      </tr>
+  </tbody>
+
+</table>
+
+  <!-- CARD BODY BEGIN -->
+  <div class="" id="hideinfo{{laite.id}}" style="display:none;">
+    <p class="card-text">
+      <div class="alert alert-light" role="alert">
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Oheislaitteet:</strong></div>
+            <div class="col"> 
+              {% for oheislaite_link in oheislaitteet  %}
+              {% if oheislaite_link.laite_id == laite.id %}
+              <a href="#oheislaite-{{oheislaite_link.id}}">{{ oheislaite_link }}</a>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Käyttöjärjestelmä</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.kayttojarjestelma }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Sarjanumero</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.sarjanumero }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>IMEI</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.IMEI }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>IMEI2</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.IMEI2 }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>eSIM IMEI</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.IMEI3 }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Koko (GB)</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.kapasiteetti }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Chipset</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.chipset }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Suojakoodi</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.laite_suojakoodi }}</div>
+          </div>
+        <div class="dropdown-divider"></div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Pakkokeino</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.pakkokeinonro }}/ {{ laite.esinenro }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Kirjattu</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.kirjauspvm|date:" d.m.Y"}}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Sinettipussi ID</strong></div>
+            <div class="col-sm-4">{{ laite.sinettipussi_id }}</div>
+          </div>
+        <div class="dropdown-divider"></div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Lisätietoja</strong></div>
+            <div class="col-sm-6">{{ laite.lisatietoja }}</div>
+          </div>
+        <div class="dropdown-divider"></div>
+    <p>
+
+      <a href="{% url 'laite:delete' pk=laite.pk %}" title="poista" class="btn btn-danger btn-sm">
+        <span class="fa fa-remove text-danger" aria-hidden="true"></span>
+        <span class="">Poista laite</span>
+      </a>
+      <a href="{% url 'laite:uusi_oheislaite' pk=laite.pk %}"><span><button type="submit" class="btn btn-warning btn-sm">Lisää oheislaite</button></span></a>
+      <span><a href="{% url 'laite:muokkaa_laite' pk=laite.pk %}">Muokkaa laite</a></span>
+      
+    </p>
+
+      {% comment %} Check if there are attached devices {% endcomment %}
+      {% for oheislaite in oheislaitteet %}
+      {% if oheislaite.laite_id == laite.id %}
+          <!-- HIDE / SHOW SCRIPT LAITE -->
+          <script>
+            $(document).ready(function(){
+            $("#hide-oh-infobutton-{{oheislaite.id}}").click(function(){
+                $("#hide-oh-info-{{oheislaite.id}}").toggle();
+            });
+            });
+          </script>
+          <!-- END SCRIPT-->
+
+        <div class="card oheislaitecard" style="background-color: #273746;" id="oheislaite-{{ oheislaite.id }}">
+        <div class="card oheislaite">
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <a class="nav-link disabled" href=""><h5 style='color:black'>{{ oheislaite }} {% if oheislaite.kapasiteetti > 0 %} ({{oheislaite.kapasiteetti}} GB){% endif %} </h5></strong></a>
+          </li>
+          <li><h5 class="hover-element" id="hide-oh-infobutton-{{oheislaite.id}}" style="color: red; margin-top: 0.4em;">+/-</h5></li>
+          <li style="margin-left: 2em;">
+            <!-- STATUS OH_SIJAINTI BEGIN-->
+            <!-- AJAX -->
+            <script>
+                  $(document).ready(function() {
+                    //Status
+                    $("#id_oheislaite_status{{oheislaite.id}}").change(function () {
+                      var oheislaite_status = $(this).val();
+
+                      $.ajax({
+                        url: '{% url "laite:validate_oheislaite_status" %}',
+                        data: {
+                          'oheislaite_status': oheislaite_status,
+                          'oheislaite_id': {{oheislaite.id}},
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                          if (data.is_valid) {
+                            console.log(data.new_status_id);
+                          }
+                        }
+                      });
+                    });
+
+                    // SIJAINTI
+                    $("#id_oheislaite_sijainti{{oheislaite.id}}").change(function () {
+                      var oheislaite_sijainti = $(this).val();
+
+                      $.ajax({
+                        url: '{% url "laite:validate_oheislaite_sijainti" %}',
+                        data: {
+                          'oheislaite_sijainti': oheislaite_sijainti,
+                          'oheislaite_id': {{oheislaite.id}},
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                          if (data.is_valid) {
+                            console.log("Valid");
+                          }
+                        }
+                      });
+                    });
+                    
+
+                  });
+            </script>
+            <!-- END AJAX-->
+
+            <!-- OHEISLAITE STATUS -->
+            <form action="" method="post" style="margin-top:1em;">
+              {% csrf_token %}
+               <medium>
+                  <select name="oheislaite_status" required id="id_oheislaite_status{{oheislaite.id}}">
+                    {% for status in oheislaite_status %}
+                        {% if status.on_aktiivinen %}
+                        {% if status.id == oheislaite.oheislaite_status_id %}
+                    <option value="{{ status.id }}" selected>{{ status }}</option>
+                     {% else %}
+                    <option value="{{ status.id }}">{{ status }}</option>
+                     {% endif %}
+                     {% endif %}
+                     {% endfor %}
+                  </select>
+                  <select name="oheislaite_sijainti" required id="id_oheislaite_sijainti{{oheislaite.id}}">
+                    {% for sijainti in oheislaite_sijainti %}
+                    {% if sijainti.on_aktiivinen %}
+                    {% if sijainti.id == oheislaite.oheislaite_sijainti_id %}
+                    <option value="{{ sijainti.id }}" selected>{{ sijainti }}</option>
+                    {% else %}
+                    <option value="{{ sijainti.id }}">{{ sijainti }}</option>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                   
+                  <input type="hidden" value="{{oheislaite.id}}" name="oheislaite_id">
+                   
+                </form>
+              </medium>
+                <!-- STATUS END-->
+          </li>
+
+<!-- OHEISLAITE RAPORTTIIN AJAX -->
+<script>
+  $(document).ready(function() {
+
+    //Status
+    $("#oheislaite_raporttiin{{oheislaite.id}}").change(function () {
+      var raporttiin = $(this).val();
+      var raportti_status;
+      if ( raporttiin === '1' ) {
+        console.log(raporttiin);
+        raportti_status = '0';
+        console.log("rs: " + raportti_status);
+      } else {
+        console.log(raporttiin)
+        raportti_status = '1';
+        console.log("rs: " + raportti_status);
+      }
+        $.ajax({
+          url: '{% url "laite:validate_oheislaiteraporttiin" %}',
+          data: {
+            'raportti_status': raportti_status,
+            'oheislaite_id': {{oheislaite.id}},
+          },
+          dataType: 'json',
+          success: function (data) {
+            if (data.is_valid) {
+              console.log("status: " + data.new_oh_raporttiin_id);
+              console.log("oheislaite id: " + data.oheislaite_id);
+            }
+          }
+        });
+    });
+  });
+
+</script>
+<!-- OHEISLAITE RAPORTTIIN AJAX END -->
+        </ul>
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <span class="nav-link" style="margin-bottom:1em;">Raporttiin:
+            {% if oheislaite.raporttiin %}
+               <input type="checkbox" id="oheislaite_raporttiin{{oheislaite.id}}" name="oheislaite_raporttiin" value="1" checked></span>
+            {% else %}
+              <input type="checkbox" id="oheislaite_raporttiin{{oheislaite.id}}" name="oheislaite_raporttiin" value="0"></span> 
+            {% endif %} 
+          </li>
+        </ul>
+        </div>
+          
+            <div class="alert alert-light" role="alert" id="hide-oh-info-{{oheislaite.id}}" style="display:none;">
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>Malli</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.malli}}</div>
+                  <div class="col-sm-2 laite-title-inline"><strong>Sarjanumero</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.sarjanumero}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>Suojakoodi / salansana / PIN</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.oheislaite_suojakoodi}}</div>
+                  <div class="col-sm-2 laite-title-inline"><strong>ICCID (SIM)</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.ICCID}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>IMSI (SIM)</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.IMSI}}</div>
+                  <div class="col-sm-2 laite-title-inline"><strong>Kirjattu</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.kirjauspvm|date:" d.m.Y"}}</div>
+                </div>
+              <div class="dropdown-divider"></div>
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>Lisätietoja</strong></div>
+                  <div class="col-sm-6">{{oheislaite.lisatietoja}}</div>
+                </div>
+              <div class="dropdown-divider"></div>
+
+              <p>
+                <a href="{% url 'laite:delete_oheislaite' pk=oheislaite.pk %}" title="poista" class="btn btn-danger btn-sm">
+                  <span class="fa fa-remove text-danger" aria-hidden="true"></span>
+                  <span class="">Poista oheislaite</span>
+                </a>
+                <a href="{% url 'laite:muokkaa_oheislaite' pk=oheislaite.pk %}">Muokkaa oheislaite</a>
+              </p>
+            </div>
+          
+       </div>
+
+      {% endif %} {# oheislaite.laite_id = laite.id #}
+    {% endfor %}
+  </div>
+  <!-- CARD BODY END -->
+</div>
+</div>
+
+{% endfor %}
+
+
+{% endblock juttu_content %}

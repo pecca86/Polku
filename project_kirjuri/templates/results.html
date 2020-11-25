@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form method='GET'>
+        <div class="form-group">
+            <label for="qs">Hae laitteiden salasanoista</label>
+            <input type="text" class="form-control" id="search" name="qs" aria-describedby="poikkeamaHelp">
+            <small id="searchHelp" class="form-text text-muted">Hakutermit: Juttunumero, kohdehenkilö (etu- & sukunimi)</small>
+            <span><button class='btn btn-primary'>Hae</button><button class='btn btn-secondary'>Tyhjennä hakutulokset</button></span>
+        </div>
+    </form>
+
+
+
+    {% for salasana in object_list %}
+    
+       <table>
+        <thead>
+            <th></th>
+        </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        {% if salasana.laite_suojakoodi %}
+                            {{ salasana.laite_suojakoodi}}
+                    </td>
+                    <td>
+                        {% elif salasana.oheislaite_suojakoodi %}
+                            {{ salasana.oheislaite_suojakoodi }}
+                     </td>
+                     <td>
+                        {% elif salasana.juttu_salasana %}
+                            {{ salasana.juttu_salasana }}
+                        {% endif %}
+                    </td>
+                </tr>
+        </tbody>
+    </table> 
+    
+    
+    
+    
+    {% endfor %}
+
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends "laite/laite_base.html" %}
+{% load bootstrap3 %}
+
+{% block laite_content %}
+
+
+
+
+ <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+    
+
+    <form class="form-laite" action="" method="POST">
+        {% csrf_token %}
+        <div class="laite-form">
+                {% for laite in laites %}
+                <div class="row flex-row">
+                    <div class="col-sm-8"><h4>{{laite}} muistiinpanot</h4></div>
+                </div>
+                {% endfor %}
+                <div class="dropdown-divider"></div>
+
+                <div class="row flex-row">
+                    <div class="col-sm-3"><strong>Muistiinpano</strong></div>
+                    <div class="col-sm-8">{% bootstrap_field form.laite_muistiinpano layout="inline" %}</div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="row flex-row">
+                    <div class="col-sm-3"><strong>Kirjattu</strong></div>
+                    <div class="col-sm-5">{% bootstrap_field form.kirjauspvm layout="inline"%}</div>
+                </div>
+                <div class="row flex-row">
+                    <div class="col-sm-3"><strong>Parsitut sovellukset</strong></div>
+                    <div class="col-sm-5">{% bootstrap_field form.parsitut_sovellukset layout="inline"%}</div>
+                </div>
+                <div class="row flex-row">
+                    <div class="col-sm-3"><strong>Parsimatta jääneet sovellukset</strong></div>
+                    <div class="col-sm-5">{% bootstrap_field form.parsimatta_jaaneet_sovellukset layout="inline"%}</div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="row flex-row">
+                    <div class="col-sm-3"><strong>Jäljennöstapa</strong></div>
+                    <div class="col-sm-1">{% bootstrap_field form.physical layout="inline"%}</div>
+                    <div class="col-sm-1">{% bootstrap_field form.fullfilesystem layout="inline"%}</div>
+                    <div class="col-sm-1">{% bootstrap_field form.filesystem layout="inline"%}</div>
+                    <div class="col-sm-1">{% bootstrap_field form.apk_downgrade layout="inline"%}</div>
+                    <div class="col-sm-1">{% bootstrap_field form.logical layout="inline"%}</div>
+                    <div class="col-sm-1">{% bootstrap_field form.live layout="inline"%}</div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="row flex-row">
+                    <div class="col-sm-3"><strong>Raporttiin</strong></div>
+                    <div class="col-sm-1">{% bootstrap_field form.raporttiin layout="inline"%}</div>
+                </div>
+                    <div class="col-sm-3"><strong></strong></div>
+                    <div class="col-sm-8">
+                        {% buttons %}
+                        <button type="submit" class="btn btn-primary">Vahvista</button>
+                        <button class="btn btn-link" onclick="javascript:history.back();">Peruuta</button>
+                        {% endbuttons %}
+                    </div>
+
+        </div>
+    </form>
+</div>
+
+
+
+
+
+{% endblock laite_content %}

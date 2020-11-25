@@ -1,0 +1,90 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load static %}
+{% load bootstrap3 %}
+{% load my_tags %}
+
+
+{% block juttu_content %}
+
+
+        <div class='container-fluid'>
+          <h2 class='display-5'>Jutun poikkeamat</h2>
+          <form method="POST" action="">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+             <div class="float-left">
+                Laite
+                <select class="form-control select-haku" name='laite_id' id='laite_id' label='Laite'>
+                    <option value="">--------</option>
+                  {% for l in laites %}
+                    <option value="{{l.id}}" name="{{l.id}}">{{l}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <br>
+              <br>
+              <br>
+              <br>
+            <button type="submit" class="btn btn-primary">Vahvista</button>
+            <button type="reset" class="btn btn-secondary">Tyhjennä lomake</button>
+
+              
+
+          {% endbuttons %}
+
+          
+
+          </form>
+
+          {% comment %} LIST OF POIKKEAMAT {% endcomment %}
+          <div class='container-fluid'>s
+          <h4>Poikkeamat:</h4>
+          
+          
+            <table class="table">
+
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Poikkeama</th>
+                <th scope="col">Laite</th>
+                <th scope="col">Kirjaaja</th>
+                <th scope="col">Pvm</th>
+              </tr>
+            </thead>
+          {% for poikkeama in jutun_poikkeamat %}
+
+            <tbody>
+              {% if forloop.counter|modulo:2 == 0 %}
+              <tr style="background-color: whitesmoke">
+                {% else %}
+                <tr style="background-color: white">
+                  {% endif %}
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>
+                    {{ poikkeama }}
+                    <br>
+                    <a href="{% url 'juttu:juttu_poikkeamat_delete' pk=poikkeama.pk %}"><span class="badge badge-danger">Poista</span></a>
+                    <a href="{% url 'juttu:juttu_poikkeamat_update' pk=poikkeama.pk %}"><span class="badge badge-info">Muokkaa</span></a>
+                    {% if poikkeama.raporttiin %}
+                      <span class="badge badge-success">Raportissa</span>
+                    {% else %}
+                      <span class="badge badge-primary">EI RAPORTISSA</span>
+                    {% endif %}
+                  </td>
+                  <td>{{poikkeama.laite}}</td>
+                  <td>{{poikkeama.it_tutkija}}</td>
+                  <td>{{poikkeama.kirjauspvm|date:" d.m.Y"}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+
+          </div>
+
+        </div>
+
+</div>
+
+{% endblock juttu_content %}

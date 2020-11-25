@@ -1,0 +1,4 @@
+{% extends "base.html" %} {# at the terminal, run pip install django-bootstrap4 #} {% load bootstrap4 %} {% block content %}
+Sign Up
+{% csrf_token %} {% bootstrap_form form %} {% buttons %} <button type="submit" class="btn btn-primary">Login</button> {% endbuttons %} 
+{% endblock %} 

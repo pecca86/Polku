@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>PUT YOU LOAD INSIDE ME!</p>
+    <a href="{% url 'juttu:uusi_juttu' %}">Uusi juttu</a>
+
+    {{help_insert}}
+    {{this_pk}}
+    
+    {% for juttuu in jutut %}
+
+    {{ juttuu}}
+        
+    {% endfor %}
+        
+</body>
+</html>

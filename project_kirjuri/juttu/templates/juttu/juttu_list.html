@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+
+
+<!-- TESTING -->
+
+
+<!-- END OF TESTING -->
+
+
+
+<!-- SEARCH BAR -->
+
+<form>
+  <div class="form-group col-sm-9 float-left">
+    <label for="q">Hae jutuista</label>
+    <input type="text" class="form-control" id="search" name="q" aria-describedby="emailHelp">
+      <div class="float-left">
+        <select class="form-control select-haku" name='tarkenne' id='tarkenne'>
+          <option name="wildcard" value="wildcard">Wildcard</option>
+          <option name="juttunumero" value="juttunumero">Juttunumero / case</option>
+          <option name="etu_and_suku" value="etu_and_suku">Kohdehenkilö (etu- & sukunimi)</option>
+          <option name="etu_or_suku" value="etu_or_suku">Kohdehenkilö (etu- / sukunimi)</option>
+          <option name="it_tutkija" value="it_tutkija">IT-tutkija</option>
+        </select>
+      </div>
+    <span><button class='btn btn-primary haku-btn select-haku'>Hae</button><button class='btn btn-secondary select-haku'>Tyhjennä hakutulokset</button></span>
+  </div>
+</form>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="float-left">
+<h5 style="color: #EC7063">Hakutermi: {{ search_term }}</h5>
+</div>
+
+<!-- END SEARCH BAR -->
+<table class="table table-condensed">
+  <thead>
+    <th>
+      <!-- PAGINATION -->
+
+      <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; ensimmäinen</a>
+                <a href="?page={{ page_obj.previous_page_number }}">edellinen</a>
+            {% endif %}
+
+            <span class="current">
+                Sivu {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">seuraava</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">viimeinen &raquo;</a>
+            {% endif %}
+        </span>
+      </div>
+
+      <!-- END PAGINATION -->
+    </th>
+  </thead>
+</table>
+
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Juttunumero</th>
+        <th scope="col">Tutkintanimike</th>
+        <th scope="col">Kohdehenkilö</th>
+        <th scope="col">kiireellisyys</th>
+        <th scope="col">Status</th>
+        <th scope="col">Ryhmä</th>
+        <th scope="col">IT-tutkija</th>
+        <th scope="col">Kirjauspvm</th>
+        <th scope="col" style="width:10;">Laitemäärä</th>
+      </tr>
+    </thead>
+
+{% for juttu in object_list  %}
+
+    <tbody>
+      
+      {% if juttu.juttu_status.aloittamatta_status %} {% comment %} Aloittamatta {% endcomment %}
+      <tr style="background-color: #FADBD8;"> {% comment %} Punainen {% endcomment %}
+      
+      {% elif juttu.juttu_status.aloitettu_status and juttu.user_id is user.id %} {% comment %} Käsittelyssä & kirjautuneella tutkijalla {% endcomment %}
+      <tr style="background-color: #AED6F1;;"> {% comment %} Sininen {% endcomment %}
+      
+      {% elif juttu.juttu_status.aloitettu_status %} {% comment %} Käsittelyssä {% endcomment %}
+      <tr style="background-color: whitesmoke;"> {% comment %} Harmaanvalkoinen {% endcomment %}
+
+      {% elif juttu.juttu_status.odottaa_status and juttu.user_id is user.id %} {% comment %} Odottaa {% endcomment %}
+      <tr style="background-color: #f2efb1;"> {% comment %} Keltainen {% endcomment %}
+      
+      {% elif juttu.juttu_status.valmis_status %} {% comment %} Käsitelty {% endcomment %}
+      <tr style="background-color: #D0ECE7;"> {% comment %} Vihreä {% endcomment %}
+        
+        {% else %}
+        <tr style="background-color: white">
+      {% endif %}
+        <th scope="row">{{ forloop.counter }}</th>
+        <td><a href="{% url 'juttu:single_juttu' pk=juttu.pk %}">{{juttu.juttunumero}} {% if juttu.case_nimi %}*{% endif %}</a></td>
+        <td>{{juttu.nimike}}</td>
+        <td>{{juttu.get_kohdehenkilo}} ({{juttu.asianosaisuus}})</td>
+        <td>{{juttu.kiireellisyys}}</td>
+        <td>{{ juttu.juttu_status }}</td>
+        <td>{{ juttu.ryhma.tutkintaryhma }}</td>
+        <td>
+          
+          {% if juttu.user %} {{ juttu.user }} {% else %} Ei IT-tutkijaa{% endif %}
+           
+        </td>
+        <td>{{ juttu.kirjauspvm|date:" d.m.Y" }}</td>
+        <td>{{ juttu.juttus.count }}</td>
+      </tr>
+    </tbody>
+{% endfor %}
+
+</table>
+
+
+<!-- PAGINATION -->
+
+<div class="pagination">
+  <span class="step-links">
+      {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; ensimmäinen</a>
+          <a href="?page={{ page_obj.previous_page_number }}">edellinen</a>
+      {% endif %}
+
+      <span class="current">
+          Sivu {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">seuraava</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">viimeinen &raquo;</a>
+      {% endif %}
+  </span>
+</div>
+
+<!-- END PAGINATION -->
+    
+{% endblock content %}
+    

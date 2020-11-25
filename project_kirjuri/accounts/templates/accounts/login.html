@@ -1,0 +1,12 @@
+{% extends "base.html" %} {# at the terminal, run pip install django-bootstrap4 #} 
+{% load bootstrap3 %} 
+{% block content %}
+<form action="" method="post">
+{% csrf_token %} 
+{% bootstrap_form form %} 
+{% buttons %}
+<button type="submit" class="btn btn-primary">Kirjaudu sisään</button>
+ 
+{% endbuttons %} 
+</form>
+{% endblock %} 

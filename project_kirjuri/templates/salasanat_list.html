@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+
+<form>
+  <div class="form-group">
+    <label for="qs">Hae salasanoista</label>
+    <input type="text" class="form-control" id="search" name="qs" aria-describedby="poikkeamaHelp">
+    <small id="searchHelp" class="form-text text-muted">Hakutermit: Juttunumero, kohdehenkilö (etu- & sukunimi)</small>
+    <span><button class='btn btn-primary'>Hae</button><button class='btn btn-secondary'>Tyhjennä hakutulokset</button></span>
+  </div>
+</form>
+<h5 style="color: #EC7063">Hakutermi: {{ search_term }}</h5>
+<form action="{% url 'etsi' %}" method="get" target="_blank">
+  <input type="hidden" class="form-control" id="search" name="qs" value="{{search_term}}" >
+  <input type="submit" value="Pelkistetty lista">
+</form>
+<p></p>
+
+
+
+
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Salasana</th>
+        <th scope="col">Kohdehenkilö</th>
+        <th scope="col">Juttu</th>
+        <th scope="col">Laite</th>
+      </tr>
+    </thead>
+
+{% for salasana in object_list %}
+
+
+    <tbody>
+      <tr style="background-color: white">
+        
+        {% if salasana.laite_suojakoodi %} <!-- If salasana is an instance of Laite or Oheislaite -->
+        <td>{{ salasana.laite_suojakoodi }}</td>
+        {% elif salasana.juttu_salasana %} {% comment %} salasana instance of Juttu {% endcomment %}
+        <td>{{salasana.juttu_salasana}}</td>
+        {% elif salasana.oheislaite_suojakoodi %} {% comment %} salasana instance of Juttu {% endcomment %}
+        <td>{{salasana.oheislaite_suojakoodi}}</td>
+        {% endif %}
+
+        {% if salasana.oheislaite_suojakoodi %} {% comment %} if salasana instance of oheislaite {% endcomment %}
+        <td>{{salasana.laite.juttu.get_kohdehenkilo}}</td>
+        {% elif salasana.juttu_salasana %}
+        <td>{{salasana.juttu.get_kohdehenkilo}}</td>
+        {% elif salasana.laite_suojakoodi %}
+        <td>{{salasana.juttu.get_kohdehenkilo}}</td>
+        {% endif %}
+
+        {% if salasana.oheislaite_suojakoodi %} {% comment %} if salasana instance of oheislaite {% endcomment %}
+        <td><a href="{% url 'juttu:single_juttu' pk=salasana.laite.juttu.pk %}">{{salasana.laite.juttu.juttunumero}}</a></td>
+        {% elif salasana.juttu_salasana %}
+        <td><a href="{% url 'juttu:single_juttu' pk=salasana.juttu.pk %}">{{salasana.juttu.juttunumero}}</a></td>
+        {% elif salasana.laite_suojakoodi %}
+        <td><a href="{% url 'juttu:single_juttu' pk=salasana.juttu.pk %}">{{salasana.juttu.juttunumero}}</a></td>
+        {% endif %}
+
+        {% if salasana.laite_suojakoodi %}
+        <td><a href=" {% url 'laite:single_laite' pk=salasana.id %}">{{ salasana.valmistaja }}, {{salasana.malli}}</a></td>
+        {% elif salasana.oheislaite_suojakoodi %}
+        <td><a href=" {% url 'laite:single_laite' pk=salasana.laite.id %}">{{ salasana }}</a></td>
+        {% elif salasana.juttu_salasana %}
+        <td>Ei laitetta</td>
+        {% endif %}
+
+      </tr>
+      
+    </tbody>
+
+
+{% endfor %}
+
+</table>
+
+
+
+{% endblock content %}

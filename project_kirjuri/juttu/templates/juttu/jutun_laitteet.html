@@ -1,0 +1,299 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load bootstrap3 %}
+
+{% block juttu_content %}
+
+
+{% comment %} TESTING {% endcomment %}
+
+
+{% comment %} END OF TESTING {% endcomment %}
+
+{% comment %} Links for navigating easier to each laite {% endcomment %}
+{% for laite_link in laites  %}
+
+  <button class="btn"><a href="#{{laite_link.id}}">{{ laite_link.valmistaja }} {{laite_link.malli}} {% if laite_link.kapasiteetti %}({{laite_link.kapasiteetti}}GB){% endif %}</a></button>
+
+{% endfor %}
+
+
+<nav class="nav navbar-light sticky-top my-2 my-lg-0">
+<div class="container-fluid">
+  <ul class="nav navbar-nav float-left my-2 my-lg-0">
+    <li class="my-2 my-lg-0">
+      <a href="{% url 'laite:uusi_laite_pk' pk=juttu.id %}" title="uusi_laite" class="btn btn-primary btn-sm">
+          <span class="">LISÄÄ UUSI LAITE</span>
+      </a>
+      <a href="#" class="btn btn-secondary btn-sm">Sivun alkuun</a>
+    </li>
+  </ul>
+</div>
+</nav>
+<p></p>
+
+
+{% comment %} ITERATE TROUGH ALL THE LAITES OF THE JUTTU {% endcomment %}
+{% for laite in laites %}
+
+
+<div class="card laitecard" id="{{ laite.id }}">
+  {% if 'Odottaa' in laite.laite_status %} 
+    <div class="card-header" style="background-color:yellow">
+    
+    {% elif 'Valmis' in laite.laite_status %}
+    <div class="card-header" style="background-color:lightgreen">
+    
+    {% elif 'Jäljennetty' in laite.laite_status %}
+    <div class="card-header" style="background-color:DarkTurquoise">
+    
+    {% elif 'Kryptattu' in laite.laite_status %}
+    <div class="card-header" style="background-color:MediumOrchid">
+    
+    {% elif 'Rikki' in laite.laite_status %}
+    <div class="card-header" style="background-color:coral">
+    
+    {% elif 'Ei' in laite.laite_status %}
+    <div class="card-header" style="background-color:DarkSlateGray">
+
+    {% else %}
+    <div class="card-header" >
+  {% endif %}
+  <ul class="nav nav-tabs card-header-tabs">
+    <li class="nav-item">
+      <a class="nav-link disabled" href=""><h5 style='color:black'>{{ laite.laite_tyyppi }}: {{ laite.valmistaja }}, {{ laite.malli }} {% if laite.kapasiteetti > 0 %} ({{laite.kapasiteetti}} GB){% endif %} </h5></strong></a>
+    </li>
+    {% for note in laite_muistiinpanot %}
+    {% if note.laite_id == laite.id %}
+    <a href="{% url 'laite:update_muistiinpano' pk=note.id %}"><button class="btn btn-info btn-sm">Lisää muistiinpano</button></a>
+    <li class="nav-item">
+    <a class='nav-link diasbled'>
+    <div class="btn-group">
+      <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" data-display="static" aria-haspopup="true" aria-expanded="false">
+        Vilkaise laitteen muistiinpanoja
+      </button>
+      
+      <div class="dropdown-menu p-4 text-muted" style="width: 1000px;">
+        <p>
+          {{note.laite_muistiinpano}}
+        </p>
+        <div class="dropdown-divider"></div>
+        <p class="mb-0">
+          Parsitut sovellukset: {{note.parsitut_sovellukset}}
+        </p>
+        <div class="dropdown-divider"></div>
+        <p class='mt-1'>
+          Parsimatta jääneet sovellukset: {{note.parsimatta_jaaneet_sovellukset}}
+        </p>
+        <div class="dropdown-divider"></div>
+        <p class='mt-1'>
+          Jäljennöstapa: 
+
+               {% if note.physical%}
+                <span class="badge badge-danger">Physical</span>
+              {% endif %}
+              {% if note.fullfilesystem%}
+                <span class="badge badge-warning">FFS</span>
+              {% endif %}
+              {% if note.filesystem%}
+                <span class="badge badge-info">FS</span>
+              {% endif %}
+              {% if note.apk_downgrade%}
+                <span class="badge badge-primary">APK D</span>
+              {% endif %}
+              {% if note.logical%}
+                <span class="badge badge-success">Logical</span>
+              {% endif %}
+
+        </p>
+        <div class="dropdown-divider"></div>
+        <p class='mt-1'>
+        {% if note.raporttiin %}
+        Muistiinpano raportissa: Kyllä
+        {% else %}
+        Muistiinpano raportissa: <strong style="color:red">Ei</strong></p>
+        {% endif %}
+      </div>
+    </div>
+    </a>
+    </li>
+
+    
+    {% endif %}
+    {% endfor %}
+
+
+  </ul>
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link disabled" href="">Sijainti: <strong>{{laite.sijainti}}</strong></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="">Status: <strong>{{laite.laite_status}}</strong></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">
+          {% if laite.raporttiin %}
+            <p>Raportissa: <strong>Kyllä</strong></p>
+          {% else %}
+            <p>Raportissa: <strong style="color:red">Ei</strong></p>
+          {% endif %}
+        </a>
+      </li>
+
+
+
+
+
+
+    </ul>
+
+    <ul class="nav nav-tabs card-header-tabs">
+      <li>
+        <a class="nav-link disabled">Oheislaitteet:</a>
+      </li>
+      {% for oheislaite_link in oheislaitteet  %}
+        {% if oheislaite_link.laite_id == laite.id %}
+        <button class="btn btn-sm"><a href="#oheislaite-{{oheislaite_link.id}}">{{ oheislaite_link }}</a></button>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      <div class="alert alert-light" role="alert">
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Käyttöjärjestelmä</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.kayttojarjestelma }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Sarjanumero</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.sarjanumero }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>IMEI</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.IMEI }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>IMEI2</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.IMEI2 }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>eSIM IMEI</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.IMEI3 }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Koko (GB)</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.kapasiteetti }}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Chipset</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.chipset }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Suojakoodi</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.suojakoodi }}</div>
+          </div>
+        <div class="dropdown-divider"></div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Pakkokeino</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.pakkokeinonro }}/ {{ laite.esinenro }}</div>
+            <div class="col-sm-2 laite-title-inline"><strong>Kirjattu</strong></div>
+            <div class="col-sm-4 laite-info-inline">{{ laite.kirjauspvm|date:" d.m.Y"}}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Sinettipussi ID</strong></div>
+            <div class="col-sm-4">{{ laite.sinettipussi_id }}</div>
+          </div>
+        <div class="dropdown-divider"></div>
+          <div class="row">
+            <div class="col-sm-2 laite-title-inline"><strong>Lisätietoja</strong></div>
+            <div class="col-sm-6">{{ laite.lisatietoja }}</div>
+          </div>
+        <div class="dropdown-divider"></div>
+    <p>
+
+      <a href="{% url 'laite:delete' pk=laite.pk %}" title="poista" class="btn btn-danger btn-sm">
+        <span class="fa fa-remove text-danger" aria-hidden="true"></span>
+        <span class="">Poista laite</span>
+      </a>
+      <a href="{% url 'laite:uusi_oheislaite' pk=laite.pk %}"><span><button type="submit" class="btn btn-warning btn-sm">Lisää oheislaite</button></span></a>
+      <span><a href="{% url 'laite:muokkaa_laite' pk=laite.pk %}">Muokkaa laite</a></span>
+      
+    </p>
+
+      {% comment %} Check if there are attached devices {% endcomment %}
+      {% for oheislaite in oheislaitteet %}
+      {% if oheislaite.laite_id == laite.id %}
+        <div class="card oheislaitecard" style="background-color: #273746;" id="oheislaite-{{ oheislaite.id }}">
+        {% if 'Valmis' in oheislaite.oheislaite_status %}
+        <div class="card oheislaite" style="background-color:lightgreen">
+        {% elif 'Jäljennetty' in oheislaite.oheislaite_status%}
+        <div class="card oheislaite" style="background-color:lightgreen">
+        {% else %}
+        <div class="card oheislaite">
+        {% endif %}
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <a class="nav-link disabled" href=""><h5 style='color:black'>{{ oheislaite }}{% if oheislaite.kapasiteetti > 0 %} ({{oheislaite.kapasiteetti}} GB){% endif %}</h5></strong></a>
+          </li>
+        </ul>
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <a class="nav-link disabled" href="">Sijainti: <strong>{{oheislaite.oheislaite_sijainti}}</strong></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="">Status: <strong>{{oheislaite.oheislaite_status}}</strong></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">
+            {% if oheislaite.raporttiin %}
+              <p>Raportissa: <strong>Kyllä</strong></p>
+            {% else %}
+              <p>Raportissa: <strong style="color:red">Ei</strong></p>
+            {% endif %} 
+            </a>
+          </li>
+        </ul>
+        </div>
+          
+            <div class="alert alert-light" role="alert">
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>Malli</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.malli}}</div>
+                  <div class="col-sm-2 laite-title-inline"><strong>Sarjanumero</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.sarjanumero}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>Suojakoodi / salansana / PIN</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.suojakoodi}}</div>
+                  <div class="col-sm-2 laite-title-inline"><strong>ICCID (SIM)</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.ICCID}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>IMSI (SIM)</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.IMSI}}</div>
+                  <div class="col-sm-2 laite-title-inline"><strong>Kirjattu</strong></div>
+                  <div class="col-sm-4 laite-info-inline">{{oheislaite.kirjauspvm|date:" d.m.Y"}}</div>
+                </div>
+              <div class="dropdown-divider"></div>
+                <div class="row">
+                  <div class="col-sm-2 laite-title-inline"><strong>Lisätietoja</strong></div>
+                  <div class="col-sm-6">{{oheislaite.lisatietoja}}</div>
+                </div>
+              <div class="dropdown-divider"></div>
+
+              <p>
+                <a href="{% url 'laite:delete_oheislaite' pk=oheislaite.pk %}" title="poista" class="btn btn-danger btn-sm">
+                  <span class="fa fa-remove text-danger" aria-hidden="true"></span>
+                  <span class="">Poista oheislaite</span>
+                </a>
+                <a href="{% url 'laite:muokkaa_oheislaite' pk=oheislaite.pk %}">Muokkaa oheislaite</a>
+              </p>
+            </div>
+          
+       </div>
+
+      {% endif %} {# oheislaite.laite_id = laite.id #}
+    {% endfor %}
+  </div>
+</div>
+      </div>
+<br> <!-- Space between cards -->
+
+{% endfor %}
+
+    
+{% endblock juttu_content %}

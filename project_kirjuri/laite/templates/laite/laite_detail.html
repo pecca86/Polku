@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- LAITE DATA STATUS AJAX -->
+<script>
+      $(document).ready(function() {
+        //Status
+        $("#id_laite_data_status{{laite.id}}").change(function () {
+          var laite_data_status = $(this).val()
+          console.log(laite_data_status);
+          $.ajax({
+            url: '{% url "laite:validate_laite_data_status" %}',
+            data: {
+              'laite_data_status': laite_data_status,
+              'laite_id': {{laite.id}},
+            },
+            dataType: 'json',
+            success: function (data) {
+              if (data.is_valid) {
+                console.log(data.new_laite_data_status_id);
+              }
+            }
+          });
+        });
+      });
+</script>
+<!-- LAITE DATA STATUS AJAX END -->
+
+<div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
+  <div class="col-md-6 px-0">
+    <h4 class="display-5">{{laite.laite_tyyppi}}: {{ laite.valmistaja }}, {{laite.malli}} {% if laite.kapasiteetti %} ({{laite.kapasiteetti}}GB){% endif %} <a href="{% url 'laite:muokkaa_laite' pk=object.pk %}">(muokkaa)</a></h4>
+
+
+        <label for="laite_data_status">Data:</label>
+        <select name="laite_data_status" required id="id_laite_data_status{{laite.id}}">
+          <option value="">----</option>
+           {% for data_status in laite_data_status %}
+                {% if data_status.on_aktiivinen %}
+                {% if data_status.id == laite.laite_data_status_id %}
+                <option value="{{ data_status.id }}" selected>{{ data_status }}</option>
+              {% else %}
+              
+              <option value="{{ data_status.id }}">{{ data_status }}</option>
+              {% endif %}
+              {% endif %}
+            {% endfor %}
+          </select>
+
+  </div>
+</div>
+<div class="alert alert-light container float-left" role="alert">
+    <div class="row">
+      <div class="col"><strong>Juttu</strong></div>
+      <div class="col"><a href="{% url 'juttu:single_juttu' pk=laite.juttu.pk %}">{{ laite.juttu.juttunumero }}</a></div>
+      <div class="col"><strong>Omistaja</strong></div>
+      <div class="col">{{ laite.juttu.get_kohdehenkilo }}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col"><strong>Käyttöjärjestelmä</strong></div>
+      <div class="col">{{ laite.kayttojarjestelma }}</div>
+      <div class="col"><strong>IMEI</strong></div>
+      <div class="col">{{ laite.IMEI }}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col"><strong>IMEI2</strong></div>
+      <div class="col">{{ laite.IMEI2 }}</div>
+      <div class="col"><strong>eSIM IMEI</strong></div>
+      <div class="col">{{ laite.IMEI3 }}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col"><strong>Sarjanumero</strong></div>
+      <div class="col">{{laite.sarjanumero}}</div>
+      <div class="col"><strong>Sinettipussi ID</strong></div>
+      <div class="col">{{ laite.sinettipussi_id }}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col"><strong>Chipset</strong></div>
+      <div class="col">{{ laite.chipset }}</div>
+      <div class="col"><strong>Kirjattu</strong></div>
+      <div class="col">{{ laite.kirjauspvm|date:" d.m.Y" }}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col"><strong>Suojakoodi</strong></div>
+      <div class="col">{{ laite.suojakoodi }}</div>
+      <div class="col"><strong>Pakkokeino</strong></div>
+      <div class="col">{{ laite.pakkokeinonro}}/{{laite.esinenro}}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col"><strong>Sijainti</strong></div>
+      <div class="col">{{ laite.sijainti }}</div>
+      <div class="col"><strong>Satus</strong></div>
+      <div class="col">{{ laite.laite_status}}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="row">
+      <div class="col-sm-3"><strong>Lisätietoja</strong></div>
+      <div class="col-sm-8">{{ laite.lisatietoja }}</div>
+    </div>
+    <div class="dropdown-divider"></div>
+
+
+
+
+
+<div class="">
+    <h5 style="color: #DC7633">Muistiinpanot</h5>
+    <div class="">
+
+      <ul class="list-group list-group-flush">
+      {% for muistiinpano in muistiinpanot %}
+      <li class="list-group-item">{{muistiinpano}}</li>
+      <li class="list-group-item">Parsitut sovellukset: {{muistiinpano.parsitut_sovellukset}}</li>
+      <li class="list-group-item">Parsimatta jääneet sovellukset: {{muistiinpano.parsimatta_jaaneet_sovellukset}}</li>
+      <li class="list-group-item"> Metodi:
+
+        {% if muistiinpano.physical %}
+        <span class="badge badge-danger">Physical</span>
+        {% endif %}
+        
+        {% if muistiinpano.fullfilesystem %}
+        <span class="badge badge-warning">FFS</span>
+        {% endif %}
+        
+        {% if muistiinpano.filesystem %}
+        <span class="badge badge-info">FS</span>
+        {% endif %}
+        
+        {% if muistiinpano.apk_downgrade %}
+        <span class="badge badge-primary">APK D</span>
+        {% endif %}
+        
+        {% if muistiinpano.logical %}
+        <span class="badge badge-success">Logical</span>
+        {% endif %}
+        
+        {% if muistiinpano.live %}
+          <span class="badge badge-light">Live</span>
+        {% endif %}
+        
+      </li>
+      <li class="list-group-item"><a href="{% url 'laite:update_muistiinpano' pk=muistiinpano.id %}"><button class="btn btn-info">Lisää muistiinpano</button></a></li>
+      {% endfor %}
+    </ul>
+    </div>
+  </div>
+  <div class="margin-top-1">
+    <h5 style="color: #DC7633">Oheislaitteet</h5>
+    {% for oheislaite in oheislaitteet %}
+        <div class="shadow p-3 mb-5 bg-white rounded">{{ oheislaite }} {% if oheislaite.kapasiteetti %}({{oheislaite.kapasiteetti}}GB){% endif %}
+            <div class="dropdown-divider"></div>
+            <div class="row">
+                <div class="col"><strong>Sarjanumero</strong></div>
+                <div class="col">{{oheislaite.sarjanumero}}/{{laite.esinenro}}</div>
+                <div class="col"><strong>Suojakoodi</strong></div>
+                <div class="col">{{oheislaite.suojakoodi}}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row">
+                <div class="col"><strong>ICCID (SIM-kortti)</strong></div>
+                <div class="col">{{oheislaite.ICCID}}</div>
+                <div class="col"><strong>IMSI (SIM-kortti)</strong></div>
+                <div class="col">{{oheislaite.IMSI}}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row">
+                <div class="col-sm-3"><strong>Lisätietoja</strong></div>
+                <div class="col-sm-8">{{oheislaite.lisatietoja}}</div>
+            </div>
+        </div>
+      {% endfor %}
+  </div>
+
+
+</div>
+
+
+{% endblock content %}

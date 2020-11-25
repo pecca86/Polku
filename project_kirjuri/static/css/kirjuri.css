@@ -1,0 +1,164 @@
+@media screen and (min-width: 3000px) {
+    html {
+       transform: scaleX(0.9);   
+       font-size: 120%;
+    }
+
+    .oheislaitecard {
+        max-width: 50%;
+    }
+
+ }
+
+
+#juttu-laite {
+    color: red;
+    background-color: black;
+}
+
+h2 {
+    color: red;
+}
+
+#kiireellinen {
+    color: red;
+}
+
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+.jumbotron {
+    margin-top: 0em;
+    width: 83.3%;
+    align-items: stretch;
+    display: flex;
+}
+
+.oheislaite {
+    margin-top: 1em;
+}
+
+.btn {
+    margin-right: 0.5em;
+}
+
+.help-block {
+    font-style: italic;
+    font-size: small;
+    color: darkred;
+}
+
+.base-container {
+    margin-right: 2em;
+    margin-left: 2em;
+    min-width: 90%;
+}
+
+.haku-kone {
+    max-width: 50em;
+}
+
+.haku-valikko {
+    max-width: 20em;
+}
+
+.haku-btn {
+    margin-left: 1.5em;
+}
+
+.select-haku {
+    margin-top: 0.5em;
+}
+
+.margin-top-1 {
+    margin-top: 1em;
+}
+
+
+.alert-light {
+    color: #283747;
+}
+
+.laite-container {
+    min-width: 90%;
+}
+
+.laite-form {
+    margin-left: 1.5em;
+}
+
+.oheislaitecard {
+    min-width: 50%;
+    font-size: small;
+    max-width: 70%;
+    margin-top: 0.1em;
+}
+
+.laitecard {
+    min-width: 50%;
+    font-size: small;
+    margin-top: 0.2em;
+    border-style: solid;
+}
+
+.laite-info-inline {
+    max-inline-size: 17em;
+}
+
+.laite-title-inline {
+    max-inline-size: 12em;
+}
+
+.laitekortti-table {
+    min-width: 90%;
+    margin-bottom: 0.5em;
+}
+
+.laitekortti-row {
+    padding-left: 1em;
+}
+
+.hover-element:hover {
+    cursor: pointer;
+    color: red;
+    font-size: large;
+}
+
+a:hover {
+    color: red;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+
+.laitekortti-head {
+    color: #EC7063;
+}
+
+.laitekortti-last {
+    margin-left: 10em;
+}
+
+.line-span {
+    margin-left: 1em;
+}
+
+/* TEST ROUND BUTTON FOR STATUS */
+.havitetty {
+    width: 15px;
+    height: 15px;
+    background-color: #9CDC33;
+    border-radius: 50%;
+    margin: 1px;
+}
+
+.not_havitetty {
+    width: 15px;
+    height: 15px;
+    background-color: red;
+    border-radius: 50%;
+    margin: 1px;
+}

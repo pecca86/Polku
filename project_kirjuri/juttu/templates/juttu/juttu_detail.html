@@ -1,0 +1,168 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block juttu_content %}
+
+<div class="alert alert-light" role="alert">
+      <h1>{{juttu.juttunumero}} {% if juttu.case_nimi %}({{juttu.case_nimi}}){% endif %}</h1>
+      
+
+        
+
+      
+      
+    <div class="container-fluid">
+        <br>
+        <div class="row">
+          <div class="col-sm-3"><strong>IT-Tutkija</strong></div>
+          <div class="col-sm-8">      {% if juttu.user is None %}
+            <h4 class='lead' style="color: red;">Jutulla ei IT-tutkijaa</h4>
+            {% else %}
+            <h4 class='lead'>{{juttu.user}}</h4>
+            {% endif %}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Tutkintanimike</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.nimike}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Kohdehenkilö</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.get_kohdehenkilo}} ({{juttu.asianosaisuus}})</h4></div>
+        </div>
+        <div class="dropdown-divider"></div>
+
+        <div class="row">
+          <div class="col-sm-3"><strong>Laite-etsinnän päätöksen tekijä</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.paattaja}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Päätöksen pmv</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.paatos_pvm|date:" d.m.Y"}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Tutkija</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.tutkija}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Ryhmä</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.ryhma}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Kirjattu</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.kirjauspvm|date:" d.m.Y, H:i "}}</h4></div>
+        </div>
+        <div class="dropdown-divider"></div>
+
+        <div class="row">
+          <div class="col-sm-3"><strong>Teonkuvaus</strong></div>
+          <div class="col-8"><h4 class='lead'>{{ juttu.teon_kuvaus }}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Toimenpidepyyntö</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{juttu.toimenpidepyynto}}</h4></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><strong>Kiireellisyys</strong></div>
+          <div class="col-sm-8"><h4 class='lead'>{{ juttu.kiireellisyys }}</h4></div>
+        </div>
+        <div class="dropdown-divider"></div>
+
+        <div class="row">
+          <div class="col-sm-3"><strong>Salasanat / suojakoodit</strong></div>
+          <div class="col-sm-8">{{juttu.salasana}}</div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-3"><strong>SIM PIN:</strong></div>
+          <div class="col-sm-8">{{juttu.pin_koodi}}</div>
+        </div>
+        <div class="dropdown-divider"></div>
+      </div>
+    </div>
+
+<!-- AJAX -->
+    <script>
+      $(document).ready(function() {
+
+        $("#id_juttu_status").change(function () {
+          var juttu_status = $(this).val();
+
+          $.ajax({
+            url: '{% url "juttu:validate_status" %}',
+            data: {
+              'juttu_status': juttu_status,
+              'juttu_id': {{juttu.id}},
+            },
+            dataType: 'json',
+            success: function (data) {
+              if (data.is_valid) {
+                console.log(data.new_status_id);
+                console.log(data.check_if_data);
+                console.log(data.juttu_status_valmis_status);
+              }
+              if (data.juttu_status_valmis_status && !data.check_if_data ) {
+                alert("Laitteiden data-statukset puuttuvat!")
+              }
+            }
+          });
+        });
+
+        $("#id_user").change(function () {
+          var user = $(this).val();
+
+          $.ajax({
+            url: '{% url "juttu:validate_tutkija" %}',
+            data: {
+              'user': user,
+              'juttu_id': {{juttu.id}},
+            },
+            dataType: 'json',
+            success: function (data) {
+              if (data.is_valid) {
+                console.log(data.msg);
+              }
+            }
+          });
+        });
+      });
+    </script>
+<!-- END AJAX -->
+
+
+
+    <div class="alert alert-light" role="alert">
+      <form method="POST" action="">
+        <div class='form-group'>
+          {% csrf_token %}
+          {{form.juttu_status.label_tag }} {{ form.juttu_status }}
+          <label for="id_user">IT-tutkija</label> {{ form.user }}
+        </div>
+      </form>
+      
+      <a href="{% url 'juttu:muokkaa_juttu' pk=juttu.pk %}">Muokkaa juttu</a>
+      <br>
+      
+      <a href="{% url 'laite:uusi_laite_pk' pk=juttu.id %}">Lisää laite</a>
+      <br>
+      <br>
+      <a href="{% url 'juttu:delete' pk=juttu.pk %}" title="poista" class="btn btn-danger">
+        <span class="fa fa-remove text-danger" aria-hidden="true"></span>
+        <span class="">Poista juttu</span>
+      </a>
+    </div>
+
+  </div>
+
+  {% if juttu.user_id is None %}
+  <script>
+    alert("Jutusta puuttuu IT-tutkijaa!")
+  </script>
+    
+  {% endif %}
+
+
+
+
+{% endblock juttu_content %}
+    

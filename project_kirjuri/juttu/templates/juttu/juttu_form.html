@@ -1,0 +1,32 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load bootstrap3 %}
+
+
+{% block juttu_content %}
+
+    <h2 class='display-5'>Jutun tiedot</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+          {% if juttu %}
+          <button type="submit" class="btn btn-primary">Päivitä</button>
+          {% else %}
+          <button type="submit" class="btn btn-primary">Vahvista</button>
+          {% endif %}
+          <button type="reset" class="btn btn-secondary">Tyhjennä lomake</button>
+        
+        {% if juttu %}
+
+        <button type="submit" class="btn btn-warning"><a href="{% url 'juttu:single_juttu' pk=juttu.pk %}">Peruuta</a></button>
+          
+        {% endif %}
+          
+        {% endbuttons %}
+  
+      </form>
+  
+
+    
+{% endblock juttu_content %}
+    

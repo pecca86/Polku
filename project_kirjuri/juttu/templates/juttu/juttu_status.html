@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{{ id|default:0 }}
+{{ numero }}
+{% block content %}
+
+
+
+<div class="jumbotron">
+    <h2>Jutun tiedot {{juttu.juttunumero}}, ID={{ id }}, nro: {{ numero }}</h2>
+    <form method="POST" action="">
+    
+        {{ form }}
+
+    </form>
+  
+  </div>
+
+    
+{% endblock content %}
+    

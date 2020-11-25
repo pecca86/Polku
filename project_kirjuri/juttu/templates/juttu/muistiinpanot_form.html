@@ -1,0 +1,47 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load static %}
+{% load bootstrap3 %}
+
+
+{% block juttu_content %}
+
+
+        <div class='container-fluid'>
+          <h2 class='display-5'>Jutun muistiinpanot</h2>
+          <form method="POST" action="">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+            <button type="submit" class="btn btn-primary">Vahvista</button>
+            <button type="reset" class="btn btn-secondary">Tyhjennä lomake</button>
+          
+          {% endbuttons %}
+    
+          </form>
+
+          {% comment %} LIST OF MUISTIINPANOT {% endcomment %}
+          <div class='container-fluid'>
+          <h4>Muistiinpanot:</h4>
+
+          {% for muistiinpano in jutun_muistiinpanot %}
+            <h5>{{muistiinpano.it_tutkija}}, {{ muistiinpano.kirjauspvm|date:" d.m.Y"}}</h5>
+            {{muistiinpano}}
+            <br>
+            <a href="{% url 'juttu:juttu_muistiinpano_delete' pk=muistiinpano.pk %}"><span class="badge badge-danger">Poista</span></a>
+            <a href="{% url 'juttu:juttu_muistiinpano_update' pk=muistiinpano.pk %}"><span class="badge badge-info">Muokkaa</span></a>
+            {% if muistiinpano.raporttiin %}
+              <span class="badge badge-success">Raportissa</span>
+            {% else %}
+              <span class="badge badge-primary">EI RAPORTISSA</span>
+            {% endif %}
+            <br>
+            <br>
+          {% endfor %}
+
+          </div>
+
+        </div>
+
+    </div>
+
+{% endblock juttu_content %}

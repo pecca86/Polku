@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>HOME {{year}} {{test}}</h1>
+
+
+  <div id="container" style="width: 75%;">
+    <canvas id="population-chart" data-url="{% url 'population-chart' year=year %}"></canvas>
+  </div>
+
+{% comment %} MAKE THESE STATIC OFFLINE {% endcomment %}
+
+  <script>
+
+    $(function () {
+
+      var $populationChart = $("#population-chart");
+      $.ajax({
+        url: $populationChart.data("url"),
+        success: function (data) {
+
+          var ctx = $populationChart[0].getContext("2d");
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: 'Juttu lkm / ryhma',
+                backgroundColor: 'blue',
+                data: data.data
+              }]          
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+          });
+
+        }
+      });
+
+    });
+
+  </script>
+
+{% endblock %}

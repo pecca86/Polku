@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirjuri</title>
+    
+    <!-- BOOTSTRAP CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/kirjuri.css' %}">
+
+    <!-- SCRIPTS -->
+    <script scr="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/kirjuri.js' %}"></script>
+
+
+</head>
+</head>
+<body>
+    <h1>Test Page</h1>
+
+    <!-- Trigger the modal with a button -->
+
+<button type="button" class="btn btn-success openBtn">Open Modal</button>
+<button action="/open_window/" type="button" class="btn btn-success openBtn2">Open Modal 2</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal with Dynamic Content</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  $('.openBtn').on('click',function(){
+      $('.modal-body').load('{% url "juttu:modal_template" %}',function(){
+          $('#myModal').modal({show:true});
+      });
+  });
+</script>
+
+<script>
+  $('.openBtn2').on('click',function(event){
+      event.preventDefault();
+      $('.modal-body').load('{% url "juttu:uusi_juttu" %}',function(){
+          $('#myModal').modal({show:true});
+      });
+  });
+</script>
+
+
+
+    <script>
+
+    function loadAsset(url, type, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.responseType = type;
+
+        xhr.onload = function() {
+            callback(xhr.response);
+        };
+
+        xhr.send();
+    }
+
+    function displayImage(html) {
+        //let objectURL = URL.createObjectURL(html);
+
+        //let image = document.createElement('img');
+        let image = document.createElement('html');
+        //image.src = objectURL;
+        document.body.appendChild(image);
+        document.body.appendChild(document.createElement("te"));
+    }
+
+    loadAsset('{% url "juttu:uusi_juttu" %}', 'document', displayImage);
+    
+    
+    </script>
+
+    {% static "first_app/images/djangoguitar.jpg" %}
+
+
+
+</body>
+</html>

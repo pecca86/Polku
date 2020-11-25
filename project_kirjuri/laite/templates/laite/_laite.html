@@ -1,0 +1,75 @@
+<!-- view to include into other html pages where we want to present a laite -->
+{% load my_tags %}
+{% load static %}
+
+
+    
+    
+        <tbody>
+        {% if forloop.counter|modulo:2 == 0 %}
+          <tr style="background-color: whitesmoke">
+          {% else %}
+          <tr style="background-color: white">
+          {% endif %}
+            <th scope="row">{{ forloop.counter }}</th>
+            <td> <a href="{% url 'laite:single_laite' pk=laite.pk %}">{{ laite.valmistaja }} {{ laite.malli }}</a></td>
+            <td><a href="{% url 'juttu:single_juttu' pk=laite.juttu.pk %}">{{ laite.juttu.juttunumero }}</a></td>
+            <td>{{ laite.juttu.get_kohdehenkilo }}</td>
+
+            <td>
+            {% for muistiinpano in laite_muistiinpanot %}
+
+              <!-- If muistiinpano matches with the laite -->
+              {% if muistiinpano.laite_id == laite.id %}
+                <!-- Check the methods one by one -->
+                {% if muistiinpano.physical %}
+                <span class="badge badge-danger">Physical</span>
+                {% endif %}
+                
+                {% if muistiinpano.fullfilesystem %}
+                <span class="badge badge-warning">FFS</span>
+                {% endif %}
+                
+                {% if muistiinpano.filesystem %}
+                <span class="badge badge-info">FS</span>
+                {% endif %}
+                
+                {% if muistiinpano.apk_downgrade %}
+                <span class="badge badge-primary">APK Downgrade</span>
+                {% endif %}
+                
+                {% if muistiinpano.logical %}
+                <span class="badge badge-success">Logical</span>
+                {% endif %}
+                {% if muistiinpano.live %}
+                    <span class="badge badge-light">Live</span>
+                {% endif %}
+              
+              {% endif %}
+            {% endfor %}
+            </td>
+            
+
+              
+            <td>{{ laite.IMEI }}</td>
+            <td>{{ laite.sinettipussi_id }}</td>
+            <td>{{ laite.chipset }}</td>
+            <td>{{ laite.kayttojarjestelma }}</td>
+            <td>
+              
+              {% if laite.laite_data_status.id == 2 %} <!-- Säilytyksessä -->
+              <span class="badge badge-pill badge-danger">{{ laite.laite_data_status }}</span>
+              {% elif laite.laite_data_status.id == 5 %} <!-- Hävitetty -->
+              <span class="badge badge-pill badge-success">{{ laite.laite_data_status }}</span>
+              {% elif laite.laite_data_status.id == 1 %} <!-- Väl.aik.säil. -->
+              <span class="badge badge-pill badge-warning">{{ laite.laite_data_status }}</span>
+              {% elif laite.laite_data_status.id == 3 %} <!-- Pid.aik.säil. -->
+              <span class="badge badge-pill badge-primary">{{ laite.laite_data_status }}</span>
+              {% else %}
+              <span class="badge badge-pill badge-dark">{{ laite.laite_data_status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ laite.kirjauspvm|date:" d.m.Y"}}</td>
+          </tr>
+        </tbody>
+    

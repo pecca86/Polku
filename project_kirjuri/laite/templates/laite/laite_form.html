@@ -1,0 +1,106 @@
+{% extends "laite/laite_base.html" %}
+{% load bootstrap3 %}
+
+
+
+{% block laite_content %}
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+        
+    <form class="form-laite" action="" method="POST">
+    {% csrf_token %}
+        <div class="laite-form">
+        {% if laite.juttu %}
+
+                <h4 style="color:black;">Muokkaa laite</h4> 
+                <div class="row flex-row">
+                    <div class="col-sm-1"><strong>Juttu</strong></div>
+                    <div class="col-sm-2">{% bootstrap_field form.juttu layout="inline" %}</div>
+                </div>
+            {% else %}
+                <h4 style="color:black;">Lisää uusi laite</h4> 
+            
+        {% endif %}
+        <p></p>
+
+            <div class="row flex-row">
+                <div class="col-sm-1"><strong>Valmistaja</strong></div>
+                <div class="col-sm-5">{% bootstrap_field form.valmistaja layout="inline"%}</div>
+                <div class="col-sm-1"><strong>Malli</strong></div>
+                <div class="col-sm-5">{% bootstrap_field form.malli layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row" style:"background-color:whitesmoke;">
+                <div class="col-md-1"><strong>Laitetyyppi</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.laite_tyyppi layout="inline" %}</div>
+                <div class="col-md-1"><strong>Koko (GB)</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.kapasiteetti layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>Laite status</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.laite_status layout="inline" %}</div>
+                <div class="col-md-1"><strong>Laite sijainti</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.sijainti layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>Käytt.järj.</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.kayttojarjestelma layout="inline" %}</div>
+                <div class="col-md-1"><strong>Chipset</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.chipset layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>IMEI1</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.IMEI layout="inline" %}</div>
+                <div class="col-md-1"><strong>IMEI2</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.IMEI2 layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>eSIM IMEI</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.IMEI3 layout="inline" %}</div>
+                <div class="col-md-1"><strong>Sarjanumero</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.sarjanumero layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>Suojakoodi</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.laite_suojakoodi layout="inline" %}</div>
+                <div class="col-md-1"><strong>Sinettipussi ID</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.sinettipussi_id layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>Pakkokeinonro</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.pakkokeinonro layout="inline" %}</div>
+                <div class="col-md-1"><strong>Esinenro</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.esinenro layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>Datan status</strong></div>
+                <div class="col-md-5">{% bootstrap_field form.laite_data_status layout="inline" %}</div>
+                <div class="col-sm-1">{% bootstrap_field form.raporttiin layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="row flex-row">
+                <div class="col-md-1"><strong>Lisätietoja</strong></div>
+                <div class="col-md-9">{% bootstrap_field form.lisatietoja layout="inline" %}</div>
+            </div>
+            <div class="dropdown-divider"></div>
+
+            {% buttons %}
+            <button type="submit" class="btn btn-primary">Vahvista</button>
+            <button class="btn btn-link" onclick="javascript:history.back();">Peruuta</button>        
+            
+            {% endbuttons %}
+        </div>
+
+
+    </div>
+
+{% endblock laite_content %}
+    

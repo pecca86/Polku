@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+
+<form>
+  <div class="form-group">
+    <label for="qp">Hae poikkeama</label>
+    <input type="text" class="form-control" id="search" name="qp" aria-describedby="poikkeamaHelp">
+    <small id="searchHelp" class="form-text text-muted">Hakutermit: Juttunumero, kirjaaja</small>
+    <span><button class='btn btn-primary'>Hae</button><button class='btn btn-secondary'>Tyhjennä hakutulokset</button></span>
+  </div>
+</form>
+<h5 style="color: #EC7063">Hakutermi: {{ search_term }}</h5>
+
+
+<table class="table">
+  <thead>
+    <th>
+      <!-- PAGINATION -->
+
+      <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; ensimmäinen</a>
+                <a href="?page={{ page_obj.previous_page_number }}">edellinen</a>
+            {% endif %}
+
+            <span class="current">
+                Sivu {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">seuraava</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">viimeinen &raquo;</a>
+            {% endif %}
+        </span>
+      </div>
+
+      <!-- END PAGINATION -->
+    </th>
+  </thead>
+</table>
+
+
+
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Juttunumero</th>
+        <th scope="col">Poikkeama</th>
+        <th scope="col">Laite</th>
+        <th scope="col">Kirjaaja</th>
+        <th scope="col">Kirjaus pvm</th>
+      </tr>
+    </thead>
+
+{% for poikkeama in object_list %}
+
+
+    <tbody>
+      {% if forloop.counter|modulo:2 == 0 %}
+      <tr style="background-color: whitesmoke">
+        {% else %}
+        <tr style="background-color: white">
+          {% endif %}
+        <th scope="row">{{ forloop.counter }}</th>
+        <td><a href="{% url 'juttu:single_juttu' pk=poikkeama.juttu.pk %}">{{poikkeama.juttu.juttunumero}}</a></td>
+        <td>{{poikkeama.poikkeama}}</td>
+        <td>{{poikkeama.laite.valmistaja}}, {{poikkeama.laite.malli}} </td>
+        <td>{{poikkeama.it_tutkija}}</td>
+        <td>{{ poikkeama.kirjauspvm|date:" d.m.Y" }}</td>
+      </tr>
+    </tbody>
+
+
+
+
+{% endfor %}
+</table>
+
+
+<!-- PAGINATION -->
+
+<div class="pagination">
+  <span class="step-links">
+      {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; ensimmäinen</a>
+          <a href="?page={{ page_obj.previous_page_number }}">edellinen</a>
+      {% endif %}
+
+      <span class="current">
+          Sivu {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">seuraava</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">viimeinen &raquo;</a>
+      {% endif %}
+  </span>
+</div>
+
+<!-- END PAGINATION -->
+
+
+
+{% endblock content %}

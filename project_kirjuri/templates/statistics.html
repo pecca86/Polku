@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>STATISTIIKKA {{ vuosi }}</h1>
+<form action="" method="get">
+    <label for="year">Hae vuosi</label>
+    <input type="text" name="year" id="">
+    <input type="submit" value="Hae">
+</form>
+
+<!-- BEGIN JUTTUJA / KK / VUOSI TABLES -->
+<div class="table-responsive">
+    <h4>Laitetutkintapyyntöjä {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for kk in juttumaara_kk %}
+
+                <th style="width:100px;">{{kk.month|date:"M"}}</th>
+                
+            {% endfor %}
+            <th>Yhteensä</th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Laitetutkintapyyntöjä</td>
+                {% for juttu_count in juttumaara_kk %}
+                    <td>{{juttu_count.total}}</td>
+                {% endfor %}
+                <td><strong>{{ kaikki_jutut_lkm_vuosi }}</strong></td>
+
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+<!-- END JUTTUJA / VUOSI / TABLES -->
+
+<!-- BEGIN LAITTEITA / KK / VUOSI TABLES -->
+<div class="table-responsive">
+    <h4>Laitteet {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for kk in laitemaara_kk %}
+
+                <th style="width:100px;">{{kk.month|date:"M"}}</th>
+                
+            {% endfor %}
+            <th>Yhteensä</th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Laite lkm</td>
+                {% for laite_count in laitemaara_kk %}
+                    <td style="width:100px;">{{laite_count.total}}</td>
+                {% endfor %}
+                <td><strong>{{ laite_lkm_vuosi }}</strong></td>
+
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+<!-- END LAITTEITA / KK / VUOSI TABLES -->
+
+
+<!-- BEGIN OHEISLAITTEET / KK / VUOSI TABLES -->
+<div class="table-responsive">
+    <h4>Oheislaitteet {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for kk in oheislaitemaara_kk %}
+
+                <th style="width:100px;">{{kk.month|date:"M"}}</th>
+                
+            {% endfor %}
+            <th>Yhteensä</th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Oheislaite lkm</td>
+                {% for oheislaite_count in oheislaitemaara_kk %}
+                    <td>{{oheislaite_count.total}}</td>
+                {% endfor %}
+                <td><strong>{{ oheislaite_lkm_vuosi }}</strong></td>
+
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+
+<!-- END OHEISLAITTEET / KK / VUOSI TABLES -->
+
+<!-- BEGIN LAITE GB / KK / VUOSI TABLES -->
+<div class="table-responsive">
+    <h4>Laite GB / KK / {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for kk in laite_gb_kk %}
+
+                <th style="width:100px;">{{kk.month|date:"M"}}</th>
+                
+            {% endfor %}
+            <th>Yhteensä</th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Laite GB</td>
+                {% for laite_gb_count in laite_gb_kk %}
+                    <td>{{laite_gb_count.total}}</td>
+                {% endfor %}
+                <td><strong>{{ laite_gb_lkm_vuosi.summa }}</strong></td>
+
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+<!-- END LAITE GB / KK / VUOSI TABLES -->
+
+<!-- BEGIN OHEISLAITE GB / KK / VUOSI TABLES -->
+<div class="table-responsive">
+    <h4>Oheislaite GB / KK / {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for kk in oheislaite_gb_kk %}
+
+                <th style="width:100px;">{{kk.month|date:"M"}}</th>
+                
+            {% endfor %}
+            <th>Yhteensä</th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Oheislaite GB</td>
+                {% for oheislaite_gb_count in oheislaite_gb_kk %}
+                    <td>{{oheislaite_gb_count.total}}</td>
+                {% endfor %}
+                <td><strong>{{ oheislaite_gb_lkm_vuosi.summa }}</strong></td>
+
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+<!-- END OHEISLAITE GB / KK / VUOSI TABLES -->
+
+<!-- RYHMÄ LAITE / VUOSI -->
+<div class="table-responsive">
+    <h4>Ryhmien laitetutkintapyynnöt {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for ryhma in ryhma_juttuja_vuosi %}
+
+                <th style="width:100px;">{{ryhma.ryhma_id__tutkintaryhma}}</th>
+                
+            {% endfor %}
+            <th></th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Laitetutkintapyyntöjä</td>
+                {% for pyynto_count in ryhma_juttuja_vuosi %}
+                    <td>{{pyynto_count.ryhma_juttu_lkm}}</td>
+                {% endfor %}
+                <td><strong></strong></td>
+            </tr>
+            <tr>
+                <td>Laitemäärä (vars.)</td>
+                
+                {% for laite_lkm in ryhma_laitemaara_vuosi %}
+                    <td>{{laite_lkm.ryhma_laite_lkm}}</td>
+                {% endfor %}
+                    
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+<!-- END RYHMÄ LAITE / VUOSI -->
+
+<!-- IT-TUTKIJA PYYNTÖ / VUOSI -->
+<div class="table-responsive">
+    <h4>IT-tutkijoiden laitetutkintapyynnöt {{ vuosi }}</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <th style="width:250px;"></th>
+            {% for it_tutkija in it_tutk_jutut_lkm_vuosi %}
+
+                <th style="width:100px;">{{it_tutkija.user_id__username}}</th>
+                
+            {% endfor %}
+            <th></th>
+                
+        </thead>
+        <tbody>
+            <tr>
+                <td>Laitetutkintapyyntöjä</td>
+                {% for pyynto_count in it_tutk_jutut_lkm_vuosi %}
+                    <td>{{pyynto_count.it_tutk_juttu_lkm}}</td>
+                {% endfor %}
+                <td><strong></strong></td>
+            </tr>
+            <tr>
+                <td>Laitemäärä</td>
+                {% for laite_lkm in it_tutk_laitemaara_vuosi %}
+                    <td>{{laite_lkm.tutk_laite_lkm}}</td>
+                {% endfor %}
+                <td><strong></strong></td>
+            </tr>
+            <tr>
+                <td>Oheislaitemäärä</td>
+                {% for oheislaite_lkm in it_tutk_oheislaitemaara_vuosi %}
+                    <td>{{oheislaite_lkm.tutk_laite_lkm}}</td>
+                {% endfor %}
+                <td><strong></strong></td>
+            </tr>
+        </tbody>
+
+    </table>
+  </div>
+<!-- END IT-TUTKIJA PYYNTÖ / VUOSI -->
+
+<h3>--TOTAL GB {{ vuosi }}--</h3>
+<p>Total GB: {{ laite_gb_lkm_vuosi.summa|add:oheislaite_gb_lkm_vuosi.summa }} GB</p>
+<!-- END TOTAL GB -->
+
+<h3>--TOTAL LAITEMÄÄRÄ {{ vuosi }}--</h3>
+<p>{{ laite_lkm_vuosi|add:oheislaite_lkm_vuosi }} kpl</p>
+
+    
+<!-- END TOTAL LAITEMÄÄRÄ / VUOSI -->
+
+
+
+{% endblock content %}}}
+

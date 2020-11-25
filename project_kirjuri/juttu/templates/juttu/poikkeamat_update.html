@@ -1,0 +1,21 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load bootstrap3 %}
+
+
+{% block juttu_content %}
+
+    <h2 class='display-5'>Muokkaa poikkeama</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+          <button type="submit" class="btn btn-primary">Päivitä</button>
+          
+          <a href="{% url 'juttu:juttu_poikkeamat' pk=object.juttu_id %}"><button class="btn btn-link">Peruuta</button></a>   
+            
+        {% endbuttons %}
+    </form>
+  
+
+    
+{% endblock juttu_content %}

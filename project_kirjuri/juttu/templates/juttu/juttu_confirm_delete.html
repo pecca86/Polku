@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+
+{% block content %}
+
+<h3>Haluatko varmasti poistaa jutun ja kaikki liitetyt laitteet?</h3>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" value="Vahvista" class="btn btn-danger">
+    <a href="{% url 'juttu:single_juttu' pk=juttu.pk %}">Peruuta</a>
+    
+</form>
+
+    
+{% endblock content %}
+    

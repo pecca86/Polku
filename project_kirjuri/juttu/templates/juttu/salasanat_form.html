@@ -1,0 +1,90 @@
+{% extends 'juttu/juttu_base.html' %}
+{% load static %}
+{% load bootstrap3 %}
+{% load my_tags %}
+
+
+{% block juttu_content %}
+
+        <div class='container-fluid'>
+          <h2 class='display-5'>Jutun salasanat</h2>
+          <form method="POST" action="">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+
+            <button type="submit" class="btn btn-primary">Vahvista</button>
+            <button type="reset" class="btn btn-secondary">Tyhjennä lomake</button>
+
+          {% endbuttons %}
+          </form>
+
+          {% comment %} LIST OF POIKKEAMAT {% endcomment %}
+          <div class='container-fluid'>
+          <h4>Salasanat <a href="{% url 'juttu:salasanat_print' pk=juttu.id %}" target="_BLANK">(tulosta)</a></h4>
+          
+            <table class="table">
+
+            <thead>
+              <tr>
+                <th scope="col">Salasana</th>
+                <th scope="col">Lähde</th>
+              </tr>
+            </thead>
+          {% for salasana in jutun_salasanat %}
+
+            <tbody>
+              <tr style="background-color: white">
+                  <td>
+                    {{ salasana }}
+                  </td>
+                  <td>
+                    Muu <a href="{% url 'juttu:delete_salasana' pk=salasana.pk %}"><span class="badge badge-danger">Poista</span></a>
+                  </td>
+                  </tr>
+          {% endfor %}
+          {% for laite in laites %}
+          
+              <tbody>
+
+              <tr style="background-color: white">
+
+                  {% if laite.laite_suojakoodi %}
+                  <td>
+                    {{ laite.laite_suojakoodi }}
+                  </td>
+                  <td>
+                    {{ laite.valmistaja }}, {{ laite.malli }}
+                  </td>
+                  {% endif %}
+                </tr>
+
+                {% for oheislaite in oheislaitteet %}
+                  {% if oheislaite.laite_id == laite.id %}
+                    <tbody>
+
+                    <tr style="background-color: white">
+
+                        {% if oheislaite.oheislaite_suojakoodi %}
+                          <td>
+                            {{ oheislaite.oheislaite_suojakoodi }}
+                          </td>
+                          <td>
+                            {{ oheislaite }} ({{oheislaite.laite.valmistaja}}, {{oheislaite.laite.malli}})
+                          </td>
+                          </tr>
+                    
+                        {% endif %}
+                  {% endif %}
+
+                {% endfor %}
+          {% endfor %}
+            </tbody>
+          </table>
+
+          </div>
+
+        </div>
+
+</div>
+{% endblock juttu_content %}

@@ -1,0 +1,23 @@
+{% extends "laite/laite_base.html" %}
+
+
+{% block laite_content %}
+
+<div class="container">
+
+    
+    
+    <form method="post">
+        
+        <h4>Haluatko varmasti poistaa laitteen: {{laite}}?</h4>
+        <p>Jutusta: {{laite.juttu}}</p>
+        {% csrf_token %}
+        <input type="submit" value="Poista" class="btn btn-danger">
+        <a href="{% url 'juttu:jutun_laitteet' pk=laite.juttu.pk %}" class="btn btn-ligth">Peruuta</a>
+
+    </form>
+
+</div>
+    
+{% endblock laite_content %}
+    

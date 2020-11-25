@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salasanat</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <th></th>
+        </thead>
+        {% for s in salasanat %}
+        <tbody>
+            <tr>
+                <td>
+                    {{s}}
+                </td>
+            </tr>
+        {% endfor %}
+
+        {% for laite in laitteet %}
+            <tbody>
+                <tr>
+                    <td>
+                    {% if laite.laite_suojakoodi %}
+                        {{laite.laite_suojakoodi }}
+                    {% endif %}
+                    </td>
+                </tr>
+        {% endfor %}
+
+        {% for oheislaite in oheislaitteet %}
+            {% if oheislaite.oheislaite_suojakoodi%}
+                <tbody>     
+                    <tr>        
+                        <td>
+                            {{ oheislaite.oheislaite_suojakoodi }}
+                        </td>
+
+                    </tr>
+            {% endif %}       
+        {% endfor %}
+                
+        </tbody>
+    </table>
+</body>
+</html>

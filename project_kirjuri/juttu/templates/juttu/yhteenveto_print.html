@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap3 %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yhteenveto print</title>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/kirjuri.css' %}">
+
+    <script type="text/javascript" src="{% static 'js/kirjuri.js' %}"></script>
+    <script type="text/javascript" scr="{% static 'js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/Chart.js' %}"></script>
+</head>
+<body>
+
+
+<div class="container themed-container" style='background-color: white;'>
+<h1>Yhteenveto {{juttu.juttunumero}}</h1>
+    <span>
+        <p>Laitemäärä: {{ laites.count }}kpl</p>
+        <p>Tutkitut laitteet: 
+            
+            {% for tutkittu_laite in laites %}
+            
+            {% if tutkittu_laite.raporttiin %}
+                
+            <span class="badge badge-secondary">{{tutkittu_laite.valmistaja}}, {{tutkittu_laite.malli}}</span>
+            {% endif %}
+                
+                
+            {% endfor %}
+                
+        </p>
+    </span>
+    
+    <h3 class="container themed-container" style='background-color: bisque;'>Jutun muistiinpanot</h3>
+        
+        <div class="container themed-container" style='background-color: E0FFFF;'>
+            {% for mp in mustiinpanot_list %}
+            {% if mp.raporttiin %}
+            
+            <p>{{ mp }} //{% if mp.it_tutkija %}{{mp.it_tutkija}}{% endif %}
+                ({{mp.kirjauspvm|date:" d.m.Y"}})
+            </p>
+            
+            {% endif %}
+            
+            {% endfor %}
+        </div>
+
+<h3 class="container themed-container" style='background-color: bisque;'>Laitteet</h3>
+<div class="container themed-container" style='background-color: E0FFFF;'>
+{% for laite in laites %}
+
+    
+    {% if laite.raporttiin %}
+
+    <div class="alert alert-light" role="alert">
+        <h5 class="container themed-container" style='background-color: #B3C7D6FF; color: black;'>{{laite.valmistaja}}, {{laite.malli}} {% if laite.kapasiteetti %}, {{laite.kapasiteetti}}GB {% endif %} ({{laite.laite_status}})</h5>
+                <div class="row">
+                    <div class="col"><h5>Laitteen tiedot</h5></div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col"><strong>Käyttöjärjestelmä</strong></div>
+                    <div class="col">{{laite.kayttojarjestelma}}</div>
+                    <div class="col"><strong>Chipset</strong></div>
+                    <div class="col">{{laite.chipset}}</div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col"><strong>IMEI</strong></div>
+                    <div class="col">{{laite.IMEI}}</div>
+                    <div class="col"><strong>IMEI2</strong></div>
+                    <div class="col">{{laite.IMEI2}}</div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col"><strong>eSIM IMEI</strong></div>
+                    <div class="col">{{laite.IMEI3}}</div>
+                    <div class="col"><strong>Sarjanumero</strong></div>
+                    <div class="col">{{laite.sarjanumero}}</div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col"><strong>Pakkokeino</strong></div>
+                    <div class="col">{{laite.pakkokeinonro}}/{{laite.esinenro}}</div>
+                    <div class="col"><strong>Sinettipussi ID</strong></div>
+                    <div class="col">{{laite.sinettipussi_id}}</div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col"><strong>Käyttöjärjestelmä</strong></div>
+                    <div class="col">{{laite.kayttojarjestelma}}</div>
+                    <div class="col"><strong>Chipset</strong></div>
+                    <div class="col">{{laite.chipset}}</div>
+                </div>
+                
+                <p></p>
+                <div class="dropdown-divider"></div>
+                
+                <div class="row">
+            <div class="col"><h5>Laitteen muistiinpanot </h5></div>
+        </div>
+        {% for laite_note in laite_muistiinpano %}
+        {% if laite_note.laite_id == laite.id %}
+        <p>{{laite_note}}</p>
+        
+        {% endif %}
+        
+        {% endfor %}
+        <div class="dropdown-divider"></div>
+        
+        <h5>Parsitut sovellukset</h5>
+        {% for laite_note in laite_muistiinpano %}
+        
+        {% if laite_note.laite_id == laite.id %}
+        <p>{{laite_note.parsitut_sovellukset}}</p>
+        {% endif %}
+            
+        {% endfor %}
+        <div class="dropdown-divider"></div>
+            
+        <h5>Parsimatta jääneet sovellukset</h5>
+        {% for laite_note in laite_muistiinpano %}
+        
+        {% if laite_note.laite_id == laite.id %}
+        <p>{{laite_note.parsimatta_jaaneet_sovellukset}}</p>
+        {% endif %}
+        
+        {% endfor %}
+        <div class="dropdown-divider"></div>
+        
+        <h5>Jäljennöstapa</h5>
+        {% for laite_note in laite_muistiinpano %}
+        <p>
+            {% if laite_note.laite_id == laite.id %}
+            
+                {% if laite_note.physical %}
+                <span class="badge badge-danger">Physical</span>
+                {% endif %}
+                {% if laite_note.fullfilesystem %}
+                <span class="badge badge-warning">FFS</span>
+                {% endif %}
+                {% if laite_note.filesystem %}
+                <span class="badge badge-info">FS</span>
+                {% endif %}
+                {% if laite_note.apk_downgrade %}
+                <span class="badge badge-primary">APK Downgrade</span>
+                {% endif %}
+                {% if laite_note.logical %}
+                <span class="badge badge-success">Logical</span>
+                {% endif %}
+                {% if note.live %}
+                    <span class="badge badge-light">Live</span>
+                {% endif %}
+                    
+            {% endif %}
+            </p>
+        {% endfor %}
+        <div class="dropdown-divider"></div>
+                
+        <h5>Oheislaitteet</h5>
+            <p>
+                {% for oheislaite in oheislaitteet %}
+                    {% if oheislaite.raporttiin and oheislaite.laite_id == laite.id%}
+                        <div class="shadow p-3 mb-5 bg-white rounded">{{ oheislaite }} {% if oheislaite.kapasiteetti %}({{oheislaite.kapasiteetti}}GB){% endif %}
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col"><strong>Sarjanumero</strong></div>
+                                <div class="col">{{oheislaite.sarjanumero}}/{{laite.esinenro}}</div>
+                                <div class="col"><strong>Suojakoodi</strong></div>
+                                <div class="col">{{oheislaite.suojakoodi}}</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col"><strong>ICCID (SIM-kortti)</strong></div>
+                                <div class="col">{{oheislaite.ICCID}}</div>
+                                <div class="col"><strong>IMSI (SIM-kortti)</strong></div>
+                                <div class="col">{{oheislaite.IMSI}}</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Lisätietoja</strong></div>
+                                <div class="col-sm-8">{{oheislaite.lisatietoja}}</div>
+                            </div>
+                        </div>
+                    {% endif %}  
+                {% endfor %}
+            </p>    
+        </div>
+        {% endif %} <!-- IF LAITE.RAPORTTII -->
+        {% endfor %} <!-- FOR LAITE IN LAITES -->
+        
+            <div class="dropdown-divider"></div>
+    </div>
+        
+        <h3 class="container themed-container" style='background-color: bisque;'>Poikkeamat</h3>
+<div class="container themed-container" style='background-color: E0FFFF;'>
+    {% for poikkeama in poikkeamat_list %}
+
+    {% if poikkeama.raporttiin %}
+
+    <p>
+    {% if poikkeama.laite_id %}Laite ({{poikkeama.laite.valmistaja}}, {{poikkeama.laite.malli}}): {% endif %}
+    {{ poikkeama }} ({% if poikkeama.it_tutkija %}{{poikkeama.it_tutkija}}{% endif %} {{poikkeama.kirjauspvm|date:" d.m.Y"}})
+    </p>
+    {% endif %}
+
+    <div class="dropdown-divider"></div>
+    {% endfor %}
+</div>
+
+
+</div>
+    
+</body>
+</html>

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+
+<div class="container-fluid">
+
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <div class="sidebar-sticky pt-3">
+        {% if juttu %}
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Juttu</span>
+                <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+                </a>
+            </h6>
+            <ul class="nav flex-column">
+              
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'juttu:single_juttu' pk=juttu.pk %}">
+                  <span data-feather="home"></span>
+                  {{ juttu }} <span class="sr-only">(current)</span>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'juttu:muokkaa_juttu' pk=juttu.pk %}">
+                  Muokkaa juttu
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'juttu:juttu_muistiinpano' pk=juttu.pk %}">
+                {% if mustiinpanot_list.count > 0 %}
+                  <strong>Muistiinpanot *</strong>
+                {% elif mustiinpanot_list_in_laitteet.count > 0 %}
+                    <strong>Muistiinpanot *</strong>
+                {% else %}
+                  <span>Muistiinpanot</span>
+                {% endif %}
+                </a>
+              </li>
+
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Jutun laitteet</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'juttu:jutun_laitteet' pk=juttu.pk %}">
+                  <span data-feather="file-text"></span>
+                  Laitteet ({{ laites.count }})
+                </a>
+              </li>
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Muu</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'juttu:juttu_poikkeamat' pk=juttu.pk%}">
+                {% if poikkeamat_list.count > 0 %}
+                  <strong>Poikkeamat *</strong>
+                {% elif poikkeamat_list_in_laitteet.count > 0 %}
+                    <strong>Poikkeamat *</strong>
+                {% else %}
+                  <span>Poikkeamat</span>
+                {% endif %}
+                </a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'juttu:jutun_yhteenveto' pk=juttu.pk %}">Yhteenveto</a>
+              </li>
+              <li>
+                <a class="nav-link" href="{% url 'juttu:jutun_salasanat' pk=juttu.pk %}">Salasanat</a>
+              </li>
+            {% endif %}
+            </ul>
+          </div>
+        </nav>
+
+
+    {% if juttu.juttu_status == "Valmis" %}
+
+        <div class="jumbotron" style="background-color:lightgreen">
+
+        {% elif juttu.juttu_status == "Odottaa" %}
+
+        <div class="jumbotron" style="background-color:lightyellow">
+
+        {% else %}
+
+        <div class="jumbotron" style="background-color:white;">
+
+    {% endif %}
+
+        <div class='container-fluid'>
+            {% block juttu_content %}
+
+            {% endblock juttu_content %}
+        </div>
+    </div>
+
+{% endblock content %}

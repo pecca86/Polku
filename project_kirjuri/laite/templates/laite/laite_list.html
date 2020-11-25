@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load my_tags %}
+{% load static %}
+
+
+
+{% block content %}
+
+<form>
+  <div class="form-group">
+    <label for="ql">Hae laitteista</label>
+    <input type="text" class="form-control" id="search" name="ql" aria-describedby="emailHelp">
+    <small id="searchHelp" class="form-text text-muted">Hakutermit: merkki, malli, IMEI, sarjanumero, sinettipussi-ID, chipset, käyttöjärjestelmä, omistaja (<i>etu- & sukunimi</i>)</small>
+    <span><button class='btn btn-primary'>Hae</button><button class='btn btn-secondary'>Tyhjennä hakutulokset</button></span>
+    <span>Säilytyksessä oleva data: <input type="checkbox" name="laite_data" value="laite_data"></span>
+  </div>
+</form>
+<h5 style="color: #EC7063">Hakutermi: {{ search_term }}</h5>
+
+<table class="table">
+  <thead>
+    <th>
+      <!-- PAGINATION -->
+
+      <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; ensimmäinen</a>
+                <a href="?page={{ page_obj.previous_page_number }}">edellinen</a>
+            {% endif %}
+
+            <span class="current">
+                Sivu {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">seuraava</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">viimeinen &raquo;</a>
+            {% endif %}
+        </span>
+      </div>
+
+      <!-- END PAGINATION -->
+    </th>
+  </thead>
+</table>
+
+
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Laite</th>
+                <th scope="col">Juttu</th>
+                <th scope="col">Omistaja</th>
+                <th scope="col">Menetelmä</th>
+                <th scope="col">IMEI</th>
+                <th scope="col">Sinettipussi ID</th>
+                <th scope="col">Chipset</th>
+                <th scope="col">OS</th>
+                <th scope="col">Data</th>
+                <th scope="col">Kirjauspvm</th>
+              </tr>
+            </thead>
+        
+        {% for laite in laite_list %}
+
+        {% include 'laite/_laite.html' %}
+            
+        {% endfor %}
+
+        </table>
+            
+<!-- PAGINATION -->
+
+<div class="pagination">
+  <span class="step-links">
+      {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; ensimmäinen</a>
+          <a href="?page={{ page_obj.previous_page_number }}">edellinen</a>
+      {% endif %}
+
+      <span class="current">
+          Sivu {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">seuraava</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">viimeinen &raquo;</a>
+      {% endif %}
+  </span>
+</div>
+
+<!-- END PAGINATION -->
+
+{% endblock content %}
