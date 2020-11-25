@@ -15,4 +15,4 @@
 
 	
 ### About
-- Polku is a case management system create for inhouse purposes of a specific organisation
+- Polku is a case management system created for inhouse purposes of a specific organisation
